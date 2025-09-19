@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">Pomo</div>
+      <nav class="modes" role="tablist" aria-label="Режимы таймера">
+        <button class="mode-btn active" data-mode="pomodoro" role="tab" aria-selected="true">Помодоро</button>
+        <button class="mode-btn" data-mode="short" role="tab" aria-selected="false">Короткий перерыв</button>
+        <button class="mode-btn" data-mode="long" role="tab" aria-selected="false">Длинный перерыв</button>
+      </nav>
+      <div class="header-actions">
+        <button id="open-settings" class="icon-btn" aria-haspopup="dialog" aria-controls="settings-dialog" aria-label="Открыть настройки">⚙️</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="timer-card" aria-live="polite">
+        <div id="time-display" class="time">25:00</div>
+        <div class="controls">
+          <button id="start-pause" class="primary">Старт</button>
+          <button id="reset" class="ghost">Сброс</button>
+          <button id="next" class="ghost" title="Перейти к следующему режиму">Следующий</button>
+        </div>
+      </section>
+
+      <section class="sound-panel">
+        <div class="row">
+          <label class="switch">
+            <input type="checkbox" id="tick-toggle" checked />
+            <span>Тиканье во время отсчёта</span>
+          </label>
+        </div>
+        <div class="row">
+          <label for="volume">Громкость</label>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.5" />
+          <button id="test-sound" class="ghost">Проверить звук</button>
+        </div>
+        <div class="row">
+          <label for="alarm-select">Звук оповещения</label>
+          <select id="alarm-select">
+            <option value="synth-bell">Колокол (встроенный)</option>
+            <option value="synth-beep">Бип (встроенный)</option>
+            <option value="custom">Своя аудиозапись…</option>
+          </select>
+          <input id="alarm-file" type="file" accept="audio/*" style="display:none" />
+          <span id="alarm-file-name" class="file-name" aria-live="polite"></span>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="settings-dialog" class="settings-dialog">
+      <form method="dialog" class="settings-form">
+        <h2>Настройки</h2>
+        <div class="grid">
+          <label>Длительность Помодоро (мин)
+            <input id="dur-pomodoro" type="number" min="1" max="120" step="1" />
+          </label>
+          <label>Короткий перерыв (мин)
+            <input id="dur-short" type="number" min="1" max="60" step="1" />
+          </label>
+          <label>Длинный перерыв (мин)
+            <input id="dur-long" type="number" min="1" max="60" step="1" />
+          </label>
+          <label>После скольких помодоро длинный перерыв
+            <input id="long-interval" type="number" min="2" max="12" step="1" />
+          </label>
+        </div>
+        <menu class="settings-actions">
+          <button value="cancel" class="ghost">Отмена</button>
+          <button id="save-settings" value="default" class="primary">Сохранить</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <footer class="app-footer">
+      <span>Сделано по мотивам pomofocus.io</span>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
+
+
