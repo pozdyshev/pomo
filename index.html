@@ -52,6 +52,19 @@
           <span id="alarm-file-name" class="file-name" aria-live="polite"></span>
         </div>
       </section>
+
+      <section class="checklist-card" aria-label="Список задач">
+        <h2 class="section-title">Список задач</h2>
+        <form id="task-form" class="task-form" autocomplete="off">
+          <input id="task-input" type="text" placeholder="Новая задача…" aria-label="Новая задача" />
+          <button class="primary" type="submit">Добавить</button>
+        </form>
+        <ul id="task-list" class="task-list" role="list"></ul>
+        <div class="task-actions">
+          <button id="clear-completed" class="ghost">Удалить выполненные</button>
+          <button id="clear-all" class="ghost">Очистить все</button>
+        </div>
+      </section>
     </main>
 
     <dialog id="settings-dialog" class="settings-dialog">

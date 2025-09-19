@@ -82,6 +82,31 @@ label span{margin-left:8px}
 input[type=range]{width:200px}
 .file-name{color:var(--muted)}
 
+.checklist-card{
+  background:var(--bg-card);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.section-title{margin:0 0 4px 0}
+.task-form{display:flex;gap:8px}
+.task-form input{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #3a3d48;
+  background:#1f2129;
+  color:var(--text);
+}
+.task-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.task-item{display:flex;align-items:center;gap:10px;background:#23252e;border:1px solid #3a3d48;border-radius:12px;padding:10px}
+.task-item.completed .task-title{color:var(--muted);text-decoration:line-through}
+.task-title{flex:1}
+.task-actions{display:flex;gap:8px;justify-content:flex-end}
+.icon-del{background:transparent;border:none;color:#ff8b8b;cursor:pointer}
+
 .settings-dialog{border:none;border-radius:16px;padding:0;background:var(--bg-card);color:var(--text)}
 .settings-form{padding:20px;min-width:320px}
 .settings-form h2{margin:0 0 12px}

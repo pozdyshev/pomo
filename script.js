@@ -27,8 +27,17 @@
     durLong: document.getElementById('dur-long'),
     longInterval: document.getElementById('long-interval')
   };
+  // Checklist elements
+  Object.assign(els, {
+    taskForm: document.getElementById('task-form'),
+    taskInput: document.getElementById('task-input'),
+    taskList: document.getElementById('task-list'),
+    clearCompleted: document.getElementById('clear-completed'),
+    clearAll: document.getElementById('clear-all')
+  });
 
   let settings = loadSettings();
+  let tasks = loadTasks();
   let state = {
     mode: 'pomodoro',
     remainingSec: DEFAULTS.durations.pomodoro * 60,
@@ -53,6 +62,18 @@
   function saveSettings(){
     localStorage.setItem('pomo-settings', JSON.stringify(settings));
   }
+  function loadTasks(){
+    try{
+      const raw = localStorage.getItem('pomo-tasks');
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      if(Array.isArray(arr)) return arr.filter(t => t && typeof t.title === 'string').map(t => ({ id: t.id || crypto.randomUUID(), title: t.title, done: !!t.done }));
+      return [];
+    }catch{ return []; }
+  }
+  function saveTasks(){
+    localStorage.setItem('pomo-tasks', JSON.stringify(tasks));
+  }
 
   function formatTime(sec){
     const m = Math.floor(sec/60).toString().padStart(2,'0');
@@ -64,6 +85,76 @@
     els.time.textContent = formatTime(state.remainingSec);
     // aria label for screen readers
     els.time.setAttribute('aria-label', `${Math.floor(state.remainingSec/60)} минут ${state.remainingSec%60} секунд`);
+  }
+
+  // -------- Checklist ---------
+  function renderTasks(){
+    if(!els.taskList) return;
+    els.taskList.innerHTML = '';
+    for(const t of tasks){
+      const li = document.createElement('li');
+      li.className = 'task-item' + (t.done ? ' completed' : '');
+      li.dataset.id = t.id;
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = t.done;
+      cb.addEventListener('change', () => toggleTask(t.id, cb.checked));
+
+      const title = document.createElement('input');
+      title.type = 'text';
+      title.className = 'task-title';
+      title.value = t.title;
+      title.addEventListener('change', () => renameTask(t.id, title.value));
+
+      const del = document.createElement('button');
+      del.className = 'icon-del';
+      del.title = 'Удалить';
+      del.textContent = '✕';
+      del.addEventListener('click', () => deleteTask(t.id));
+
+      li.appendChild(cb);
+      li.appendChild(title);
+      li.appendChild(del);
+      els.taskList.appendChild(li);
+    }
+  }
+  function addTask(title){
+    const trimmed = title.trim();
+    if(!trimmed) return;
+    const task = { id: crypto.randomUUID(), title: trimmed, done: false };
+    tasks.push(task);
+    saveTasks();
+    renderTasks();
+  }
+  function toggleTask(id, done){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    t.done = !!done;
+    saveTasks();
+    renderTasks();
+  }
+  function renameTask(id, title){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    t.title = title.trim();
+    saveTasks();
+    renderTasks();
+  }
+  function deleteTask(id){
+    tasks = tasks.filter(x => x.id !== id);
+    saveTasks();
+    renderTasks();
+  }
+  function clearCompletedTasks(){
+    tasks = tasks.filter(x => !x.done);
+    saveTasks();
+    renderTasks();
+  }
+  function clearAllTasks(){
+    tasks = [];
+    saveTasks();
+    renderTasks();
   }
 
   function setMode(mode){
@@ -299,6 +390,21 @@
     setMode(state.mode);
   });
 
+  // Checklist events
+  if(els.taskForm){
+    els.taskForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      addTask(els.taskInput.value || '');
+      els.taskInput.value = '';
+    });
+  }
+  if(els.clearCompleted){
+    els.clearCompleted.addEventListener('click', clearCompletedTasks);
+  }
+  if(els.clearAll){
+    els.clearAll.addEventListener('click', clearAllTasks);
+  }
+
   function clampInt(val, min, max){
     const n = Math.round(Number(val));
     return Math.max(min, Math.min(max, isFinite(n) ? n : min));
@@ -308,6 +414,7 @@
   setMode('pomodoro');
   els.volume.value = String(settings.volume);
   updateDisplay();
+  renderTasks();
 })();
 
 
